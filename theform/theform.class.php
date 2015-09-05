@@ -6,6 +6,14 @@
       Localização: Piracicaba, SP, Brasil
       www.rodrigotognin.com.br
    */
+   
+   /*
+      Futuras adições/ajustes:
+      - textarea
+      - datalist
+      - juntar todos os tipos de campos para serem chamados do
+        método getField()
+   */
 
    header('Content-Type: text/html; charset=utf-8');
 
