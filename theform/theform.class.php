@@ -198,8 +198,8 @@
             foreach ($options as $value => $caption) {
                $html .= '<option value="' . $value . '" ';
 
-               if ($default_value != '') {
-                  $html .= 'selected="' . $default_value . '" ';
+               if ($default_value == $value) {
+                  $html .= 'selected';
                }
 
                $html .= '>' . $caption . '</option>' . PHP_EOL;
