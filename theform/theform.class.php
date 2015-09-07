@@ -19,53 +19,117 @@
 
    class TheForm
    {
-      public $is_upload; // bool
+      // Form - Atributos do formulário, utilizado assim que é criado
+      public $form_before;
+      public $form_after;
+      public $form_name;
+      public $form_id;
+      public $form_action;
+      public $form_method;
+      public $form_target;
+      public $add_to_form; // Adiciona instruções ao criar o formulário
+      public $form_is_upload; // bool (Condição específica para Upload)
+      // Label
       public $label_id;
-      public $label_name;
-      public $input_type; // text, number, password, email...
-      public $input_id;
-      public $input_name;
-      public $input_value;
-      public $input_placeholder;
-      public $input_width; // add style="width:[n]px" to field
-      public $input_required; // bool
+      public $label_name; // Será exibido antes do campo
+      public $label_add_between; // Código para adicionar entre o label e o campo
+      public $label_is_before; // bool - Indica se o label vem antes ou após o campo
+      // Field
+      public $type; // text, number, password, email, checkbox, radio...
+      public $id;
+      public $name;
+      public $value;
+      public $placeholder;
+      public $width; // adiciona style="width:[n]px" ao campo
+      public $height; // adiciona style="height:[n]px" ao campo
+      public $required; // bool
+      public $maxlength;
+      public $options; // Array específico para select e datalist
+      // Html - Propriedades a serem inseridas antes e depois dos campos
+      public $before_field;
+      public $after_field;
+      public $add_to_field;
+      // Button
       public $button_type;
       public $button_value;
 
-      public function defaultValues() {
-         $this->is_upload = false;
+      private function initialDefaultValues() {
+         // Valores iniciais padrão para o formulário
+         $this->form_before = '';
+         $this->form_after = '';
+         $this->form_name = '';
+         $this->form_id = '';
+         $this->form_action = 'validar.php';
+         $this->form_method = 'post';
+         $this->form_target = '';
+         $this->add_to_form = '';
+         $this->form_is_upload = false;
+         // Button
+         $this->button_type = 'submit';
+         $this->button_value = 'Enviar';
+      }
+
+      private function defaultValues() {
+         // Label
          $this->label_id = '';
          $this->label_name = '';
-         $this->input_type = '';
-         $this->input_id = '';
-         $this->input_name = '';
-         $this->input_value = '';
-         $this->input_placeholder = '';
-         $this->input_width = '';
-         $this->input_required = false;
-         $this->button_type = 'submit';
-         $this->button_value = 'Submit';
+         $this->label_add_between = '';
+         $this->label_is_before = 'true';
+         // Field
+         $this->type = '';
+         $this->id = '';
+         $this->name = '';
+         $this->value = '';
+         $this->placeholder = '';
+         $this->width = 0;
+         $this->height = 0;
+         $this->required = false;
+         $this->maxlength = 0;
+         $this->options = array();
+         // Html
+         $this->before_field = '';
+         $this->after_field = '';
+         $this->add_to_field = '';
       }
 
       public function __construct() {
          // Set default values
+         $this->initialDefaultValues();
          $this->defaultValues();
       }
+      
+      // Método utilizado para adicionar string´s caso tenham
+      // algum valor
+      private function addString($string_to_add) {
+         if ($string_to_add != '') {
+            return $string_to_add;
+         } else {
+            return '';
+         }
+      }
 
-      public function openForm($form_id = '', $form_name = '', $form_add = '', $action = '', $method = 'POST') {
-         $html = '<form action="' . $action . '" method="' . $method . '" ';
+      public function openForm() {
+         $html = ''; // Inicializar a variável
+         
+         $html .= $this->addString($this->form_before);
 
-         if ($form_id != '') {
-            $html .= ' id="' . $form_id . '" ';
+         $html = '<form action="' . $this->action . '" method="' . $this->method . '" ';
+
+         if ($this->form_id != '') {
+            $html .= ' id="' . $this->form_id . '" ';
          }
 
-         if ($form_name != '') {
-            $html .= ' name="' . $form_name . '" ';
+         if ($this->form_name != '') {
+            $html .= ' name="' . $this->form_name . '" ';
          }
+         
+         if ($this->form_target != '') {
+            $html .= ' target="' . $this->form_target . '" ';
+         }
+         
+         $html .= $this->addString($this->add_to_form);
 
-         $html .= $form_add . ' ';
-
-         if ($this->is_upload) {
+         if ($this->form_is_upload) {
             $html .= 'enctype="multipart/form-data" ';
          }
 
@@ -73,159 +137,158 @@
 
          return $html;
       }
-
-      public function getField($before_field = '', $after_field = '', $add_to_field = '', $add_html = '') {
-         $html = '';
-         $make_input = true;
-
-         $html .= $before_field;
-
+      
+      private function setLabel() {
+         $label = '';
+         
          if ($this->label_name != '') {
-            $html .= '<label ';
+            $label .= '<label ';
 
-            if ($this->input_name != '') {
-               $html .= 'for="' . $this->input_name . '" ';
+            if ($this->id != '') {
+               $label .= 'for="' . $this->id . '" ';
             }
 
             if ($this->label_id != '') {
-               $html .= 'id="' . $this->label_id . '" ';
+               $label .= 'id="' . $this->label_id . '" ';
             }
 
-            $html .= '>';
-
-            if (strtolower($this->input_type) == 'checkbox' ||
-                strtolower($this->input_type) == 'radio') {
-
-               $make_input = false;
-               $html .= '<input type="' . $this->input_type . '" ';
-
-               if ($this->input_name != '') {
-                  $html .= 'name="' . $this->input_name . '" ';
-               }
-
-               if ($this->input_value != '') {
-                  $html .= 'value="' . $this->input_value . '" ';
-               }
-
-               if ($this->input_id != '') {
-                  $html .= 'id="' . $this->input_id . '" ';
-               }
-
-               $html .= '>';
+            $label .= '>' . $this->label_name . '</label>' . PHP_EOL;
+         }
+         
+         return $label;
+      }
+      
+      private function setInput() {
+         $input = '';
+         
+         if ($this->name != '') {
+            if ($this->type == 'select') {
+               $input .= '<select ';
+            } else {
+               $input .= '<input ';
             }
 
-            $html .= $this->label_name . '</label>' . PHP_EOL;
+            if ($this->type != '') {
+               if (($this->type == 'list') || ($this->type == 'select')) {
+                  if ($this->type == 'list') {
+                     $input .= 'list="' . $this->name . '" ';
+                  }
+               } else {
+                  $input .= 'type="' . $this->type . '" ';
+               }
+            } 
+
+            if ($this->id != '') {
+               $input .= 'id="' . $this->id . '" ';
+            }
+
+            if ($this->name != '') {
+               $input .= 'name="' . $this->name . '" ';
+            }
+
+            if ($this->value != '') {
+               $input .= 'value="' . $this->value . '" ';
+            }
+
+            if (($this->width > 0) || ($this->height > 0)) {
+               $input .= 'style="';
+
+               if ($this->width > 0) {
+                  $input .= 'width:' . $this->width . 'px;';
+               }
+               
+               if ($this->height > 0) {
+                  $input .= 'height:' . $this->height . 'px;';
+               }
+               
+               $input .= '"';
+            }
+
+            if ($this->placeholder != '') {
+               $input .= 'placeholder="' . $this->placeholder . '" ';
+            }
+
+            if ($this->required) {
+               $input .= 'required ';
+            }
+
+            $input .= $add_to_field;
+            $input .= '>' . PHP_EOL;
+            return $input;
+         }
+      }
+
+      private function setList() {
+         $list = '';
+         
+         $list .= '<datalist id="' . $this->name . '">' . PHP_EOL;
+         
+         foreach ($this->options as $value) {
+            $list .= '<option value="' . $value . '">' . PHP_EOL;
+         }
+         
+         $list .= '</datalist>' . PHP_EOL;
+         return $list;
+         
+      }
+      
+      private function setSelect() {
+         $select = '';
+         
+         foreach ($this->options as $value => $name) {
+            $select .= '<option value="' . $value . '" ';
+            if ($value == $this->value) {
+               $select .= 'selected';
+            }
+            $select .= '>' . $name . '</option>' . PHP_EOL;
+         }
+         
+         $select .= '</select>' . PHP_EOL;
+         return $select;
+      }
+
+      public function getField() {
+         $html = '';
+
+         $html .= $this->addString($this->before_field);
+         
+         if ($this->label_is_before) {
+            $html .= $this->setLabel();
+            $html .= $this->addString($this->label_add_between);
+            $html .= $this->setInput();
+         } else {
+            $html .= $this->setInput();
+            $html .= $this->addString($this->label_add_between);
+            $html .= $this->setLabel();
+         }
+         
+         // Se for um select ou datalist, adicionar aqui
+         if ($this->type == 'list') {
+            $html .= $this->setList();
+         }
+         
+         if ($this->type == 'select') {
+            $html .= $this->setSelect();
          }
 
-         if ($this->input_name != '' && $make_input) {
-            $html .= '<input ';
-
-            if ($this->input_type != '') {
-               $html .= 'type="' . $this->input_type . '" ';
-            }
-
-            if ($this->input_id != '') {
-               $html .= 'id="' . $this->input_id . '" ';
-            }
-
-            if ($this->input_name != '') {
-               $html .= 'name="' . $this->input_name . '" ';
-            }
-
-            if ($this->input_value != '') {
-               $html .= 'value="' . $this->input_value . '" ';
-            }
-
-            if ($this->input_width != '') {
-               $html .= 'style="width:' . $this->input_width . 'px" ';
-            }
-
-            if ($this->input_placeholder != '') {
-               $html .= 'placeholder="' . $this->input_placeholder . '" ';
-            }
-
-            if ($this->input_required) {
-               $html .= 'required ';
-            }
-
-            $html .= $add_to_field;
-            $html .= '>';
-         }
-
-         $html .= $after_field . PHP_EOL;
-         $html .= $add_html;
-
+         $html .= $this->addString($this->after_field);
          $this->defaultValues();
          return $html;
       }
 
-      public function getButton($add_to_button = '') {
+      public function getButton() {
          if ($this->button_type != '') {
             $html = '<button type="' . $this->button_type . '" ';
-
-            $html .= $add_to_button . '>' . $this->button_value;
-            $html .= '</button>' . PHP_EOL;
-
-            return $html;
-         }
-      }
-
-      public function makeSelect($before_field = '', $add_to_field = '') {
-         $html = '';
-
-         $html .= $before_field;
-
-         if ($this->label_name != '') {
-             $html .= '<label ';
-
-             if ($this->input_name != '') {
-                 $html .= 'name="' . $this->input_name . '" ';
-             }
-
-             $html .= '>';
          }
 
-         $html = '<select ';
+         $html .= $add_to_button . '>' . $this->button_value;
+         $html .= '</button>' . PHP_EOL;
 
-         if ($this->input_name != '') {
-             $html .= 'name="' . $this->input_name . '" ';
-         }
-
-         if ($this->input_id != '') {
-             $html .= 'id="' . $this->input_id . '" ';
-         }
-
-         $html .= $add_to_field . '>' . PHP_EOL;
          return $html;
       }
 
-      public function addOption($options = array(), $default_value = '', $after_field = '') {
-         $html = '';
-
-         if (count($options > 0)) {
-            foreach ($options as $value => $caption) {
-               $html .= '<option value="' . $value . '" ';
-
-               if ($default_value == $value) {
-                  $html .= 'selected';
-               }
-
-               $html .= '>' . $caption . '</option>' . PHP_EOL;
-            }
-
-            $html .= '</select>' . PHP_EOL;
-
-            if ($after_field != '') {
-                $html .= $after_field;
-            }
-
-            $this->defaultValues();
-            return $html;
-         }
-      }
-
       public function closeForm() {
-         $html = '</form>';
+         $html = '</form>' . PHP_EOL;
          return $html;
       }
    }

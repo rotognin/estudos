@@ -1,0 +1,4 @@
+[07-Sep-2015 03:33:14 UTC] PHP Parse error:  syntax error, unexpected ':' in /home/ubuntu/workspace/estudos/theform/index.php on line 25
+[07-Sep-2015 03:37:44 UTC] PHP Warning:  Creating default object from empty value in /home/ubuntu/workspace/estudos/theform/index.php on line 17
+[07-Sep-2015 03:37:44 UTC] PHP Stack trace:
+[07-Sep-2015 03:37:44 UTC] PHP   1. {main}() /home/ubuntu/workspace/estudos/theform/index.php:0
