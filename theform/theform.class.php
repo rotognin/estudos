@@ -6,14 +6,6 @@
       Localização: Piracicaba, SP, Brasil
       www.rodrigotognin.com.br
    */
-   
-   /*
-      Futuras adições/ajustes:
-      - textarea
-      - datalist
-      - juntar todos os tipos de campos para serem chamados do
-        método getField()
-   */
 
    header('Content-Type: text/html; charset=utf-8');
 
@@ -113,7 +105,7 @@
          
          $html .= $this->addString($this->form_before);
 
-         $html = '<form action="' . $this->action . '" method="' . $this->method . '" ';
+         $html .= '<form action="' . $this->form_action . '" method="' . $this->form_method . '" ';
 
          if ($this->form_id != '') {
             $html .= ' id="' . $this->form_id . '" ';
@@ -201,7 +193,7 @@
                   $input .= 'height:' . $this->height . 'px;';
                }
                
-               $input .= '"';
+               $input .= '" ';
             }
 
             if ($this->placeholder != '') {
@@ -212,7 +204,7 @@
                $input .= 'required ';
             }
 
-            $input .= $add_to_field;
+            $input .= $this->add_to_field;
             $input .= '>' . PHP_EOL;
             return $input;
          }
@@ -277,18 +269,23 @@
       }
 
       public function getButton() {
+         $html = '';
+         
          if ($this->button_type != '') {
-            $html = '<button type="' . $this->button_type . '" ';
+            $html .= '<button type="' . $this->button_type . '" ';
          }
 
-         $html .= $add_to_button . '>' . $this->button_value;
+         $html .= $this->add_to_field . '>' . $this->button_value;
          $html .= '</button>' . PHP_EOL;
 
          return $html;
       }
 
       public function closeForm() {
-         $html = '</form>' . PHP_EOL;
+         $html = '';
+         
+         $html .= '</form>' . PHP_EOL;
+         $html .= $this->addString($this->form_after);
          return $html;
       }
    }
