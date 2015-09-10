@@ -12,3 +12,7 @@ Utilize o arquivo "index.php" para ver o exemplo de como usar a classe.
 PHP-MVC (3 camadas) com orientação a objetos. 
 A classe de usuários possui os campos do banco e herda a classe de conexão.
 Nessa mesma classe estão definidos os métodos CRUD para interação com o banco.
+
+<strong>"mov_arquivos"</strong> - Script php simples que lê a configuração de um arquivo txt 
+e monitora uma pasta específica, movendo os arquivos que estão nela para outras de acordo com as extensões 
+configuradas.
