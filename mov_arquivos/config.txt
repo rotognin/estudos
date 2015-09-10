@@ -1,0 +1,9 @@
+base=\php\projetos\mov_arquivos\monitorar\
+default=\php\projetos\mov_arquivos\gerais\
+mp3=\php\projetos\mov_arquivos\musicas\
+jpg=\php\projetos\mov_arquivos\imagens\
+gif=\php\projetos\mov_arquivos\imagens\
+png=\php\projetos\mov_arquivos\imagens\
+txt=\php\projetos\mov_arquivos\textos\
+doc=\php\projetos\mov_arquivos\textos\
+cbl=\php\projetos\mov_arquivos\codigo\
